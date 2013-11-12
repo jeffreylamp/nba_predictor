@@ -1,3 +1,5 @@
+
+-- for testing, this was created in 'dev' database
 CREATE TABLE os_nba_games (
     _id bigint NOT NULL,
     team_home character varying,
