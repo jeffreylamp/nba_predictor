@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src='/javascripts/jquery-1.10.2.min.js'></script>
+    <script src='/javascripts/d3.v2.js'></script>
+    <script src='/javascripts/rickshaw.min.js'></script>
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <div id="chart" class="rickshaw_graph"></div>
+  <script type="text/javascript">
+
+    /* 
+       NBA Win Probability: http://www.advancednflstats.com/
+       - Each chart should be clickable. It will bring you to a new view where you
+         can see an enlarged version of the same chart.
+
+       New events here:
+         - If we receive data for a game that doesn't exist, create a graph for that game
+         - Id of each should be the gameid. We'll handle the initial data as a stream
+           of events. So when a client first connects, we'll send him everything we know
+           about every game that's currently being played.
+         - If we receive a new datapoint for a game then add it to the appropriate chart
+         - We'll get new data every minute; Maybe we could just do this w/ a static chart?
+    */
+
+    var tv = 250;
+
+    // instantiate our graph!
+    var graph = new Rickshaw.Graph( {
+      element: document.getElementById("chart"),
+      width: 900,
+      height: 500,
+      renderer: 'line',
+      series: new Rickshaw.Series.FixedDuration([{ name: 'game1' }], undefined, {
+        timeInterval: tv,
+        maxDataPoints: 3000
+      }) 
+    } );
+
+    graph.render();
+
+    var es = new EventSource("http://localhost:3000/scores");
+
+    es.addEventListener("open", function(e) {
+        console.log("connection was opened");
+    }, false);
+
+    es.addEventListener("message", function(e) {
+        console.log("adding more data..." + Date.now());
+        var data = JSON.parse(e.data);
+        console.log(JSON.stringify(data));
+        graph.series.addData({ x: -1 * data.time_remaining, y: data.home_lead });
+        graph.render();
+    }, false);
+  </script>
+
+  </body>
+</html>

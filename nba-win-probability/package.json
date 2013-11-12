@@ -1,0 +1,15 @@
+{
+  "name": "nba-win-probability",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "3.4.0",
+    "ejs": "*",
+    "uuid": "~1.4.1",
+    "pg": "~2.8.2",
+    "underscore": "~1.5.2"
+  }
+}
