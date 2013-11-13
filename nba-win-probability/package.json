@@ -10,6 +10,8 @@
     "ejs": "*",
     "uuid": "~1.4.1",
     "pg": "~2.8.2",
-    "underscore": "~1.5.2"
+    "underscore": "~1.5.2",
+    "coffee-script": "~1.6.3",
+    "yhat": "0.0.5"
   }
 }

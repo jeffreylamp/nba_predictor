@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+    <script src='/javascripts/jquery-1.10.2.min.js'></script>
+    <script src='/javascripts/Chart.js'></script>
+  </head>
+<body>
+<div class="container">
+  <!-- NAVBAR -->
+<div class="bs-docs-section clearfix">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="bs-example">
+        <div class="navbar navbar-inverse">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://www.yhathq.com/"><span style="color: orange">y</span>hat</a>
+          </div>
+          <div class="navbar-collapse collapse navbar-responsive-collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="/today">Today</a></li>
+              <li><a href="/yesterday">Yesterday</a></li>
+            </ul>
+          </div><!-- /.nav-collapse -->
+        </div><!-- /.navbar -->
+    </div>
+  </div> 
+</div>
+</div>
+<!-- END NAVBAR -->
+<div class="row">
+  <div class="col-lg-12 text-center">
+    <div class="page-header">
+      <h1 id="game-name">NBA Win Probabilities</h1>
+    </div>
+  </div>
+</div>
+
+<!-- START CHARTS -->
+<div class="row charts"></div>
+<!-- END CHARTS -->
+
+</div>
+
+
+
+
+
+
+  <script type="text/javascript">
+
+    /* 
+       NBA Win Probability: http://www.advancednflstats.com/
+       - Each chart should be clickable. It will bring you to a new view where you
+         can see an enlarged version of the same chart.
+
+       New events here:
+         - If we receive data for a game that doesn't exist, create a graph for that game
+         - Id of each should be the gameid. We'll handle the initial data as a stream
+           of events. So when a client first connects, we'll send him everything we know
+           about every game that's currently being played.
+         - If we receive a new datapoint for a game then add it to the appropriate chart
+         - We'll get new data every minute; Maybe we could just do this w/ a static chart?
+    */
+    var _id = '<%= _id %>'
+      , game_ids = []
+      , chartTemplate = '<div class="col-xs-6 col-sm-4"><canvas id="{ID}" width="800" height="500"></canvas></div>';
+
+    $.get("/game/" + _id + "/json", function(d) {
+      var series = {}
+        , labs = {}
+        , names = {};
+      d.forEach(function(game) {
+        var data = { home_lead: [game.home_lead], time_remaining: [game.time_remaining] };
+        
+        if (game_ids.indexOf(game.game_id) < 0) {
+          // $("#charts").append(chartTemplate.replace("{ID}", game.game_id));
+          $(".charts").each(function(idx, row) {
+            if ($(row).children().length < 3) {
+              $(row).append(chartTemplate.replace("{ID}", game.game_id));
+              return false;
+            }
+          })
+          game_ids.push(game.game_id);
+          series[game.game_id] = [];
+          labs[game.game_id] = [];
+          names[game.game_id] = game.visitor + " @ " + game.home;
+        }
+        series[game.game_id].push(game.home_lead);
+        // labs[game.game_id].push(game.time_remaining);
+        labs[game.game_id].push("");
+      });
+
+      game_ids.forEach(function(_id) {
+        var data = {
+          labels: labs[_id],
+          datasets : [{
+            fillColor : "white",
+            strokeColor : "rgba(151,187,205,1)",
+            pointColor : "rgba(151,187,205,1)",
+            pointStrokeColor : "#fff",
+            data: series[_id]
+          }]
+        };
+        var ctx = $("#" + _id).get(0).getContext("2d");
+        $("#game-name").text(names[_id]);
+        var title = "<a href='/game/" + _id + "'></a>";
+        $("#" + _id).before(title)
+        new Chart(ctx).Line(data, { scaleShowGridLines : false, pointDotRadius : 3});
+      });
+    });
+
+  </script>
+
+  </body>
+</html>

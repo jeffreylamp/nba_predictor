@@ -8,11 +8,14 @@ var express = require('express')
   , path = require('path')
   , pg = require('pg')
   , _ = require('underscore')
-  , uuid = require('uuid');
+  , uuid = require('uuid')
+  , coffee = require('coffee-script')
+  , yhat = require('yhat')
+  , nba = require('./lib/nba')(process.env["PG_URI"] || "postgres://glamp@localhost/dev");
 
 var app = express()
   , connections = {}
-  , conString = process.env["PG_URI"] || "postgres://glamp@localhost/dev";
+  , yh = yhat.init("greg", "abcd1234", "yhat-aa02a554-732313416.us-west-1.elb.amazonaws.com");
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -33,7 +36,56 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', function(req, res) {
-  res.render('index', { title: "NBA Win Probability" });
+  if (new Date().getHours() > 17) {
+    res.redirect('/today');
+  } else {
+    res.redirect('/yesterday');
+  }
+});
+
+app.get('/today', function(req, res) {
+  var today = new Date();
+  today = [today.getFullYear(), today.getMonth() + 1, today.getDate()].join("-");
+  res.render("games", { title: "NBA Games | " + today, date: today });
+});
+
+app.get('/yesterday', function(req, res) {
+  var today = new Date();
+  today = [today.getFullYear(), today.getMonth() + 1, today.getDate()-1].join("-");
+  res.render("games", { title: "NBA Games | " + today, date: today });
+});
+
+app.get('/games/:date', function(req, res) {
+  res.render("games", { title: "NBA Games | " + req.params.date, date: req.params.date });
+});
+
+/*
+ * API endpoint for getting all games for 1 day
+ */
+app.get('/games/:date/json', function(req, res) {
+  nba.gamesForDate(req.params.date, function(err, result) {
+    res.send(result);
+  });
+});
+
+app.get('/game/:_id', function(req, res) {
+  res.render("single-game", { title: "NBA Games | " + req.params._id, _id: req.params._id });
+});
+
+/*
+ * API endpoint for getting one game
+ */
+app.get('/game/:_id/json', function(req, res) {
+  nba.gameById(req.params._id, function(err, result) {
+    var keys = _.keys(result[0])
+      , data = {};
+    _.each(keys, function(k) {
+      data[k] = _.pluck(result, k);
+    });
+    yh.predict("nbaPredictor", -1, data, function(preds) {
+      res.send(result)
+    });
+  });
 });
 
 /*
@@ -56,7 +108,7 @@ app.get('/scores', function(req, res) {
      to the client. This will give us a page that will auto-update as scores
      of games change.
   */
-  getGameData(-1, function(err, result) {
+  nba.getGameData(-1, function(err, result) {
     if (err) {
       console.log("error fetching initial data: " + err);
     }
@@ -87,27 +139,10 @@ http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
-getGameData = function(firstId, fn) {
-  pg.connect(conString, function(err, db, done) {
-    if(err) {
-      return console.error('could not connect to postgres', err);
-    }
-    var d1 = new Date();
-    d = d1.getFullYear() + "-" + d1.getMonth() + "-" + d1.getDate();
-    var q = "select * from os_nba_games where _id > " + firstId + " and gamedate >= '" + d + "';";
-    db.query(q, function(err, result) {
-      done();
-      if(err) {
-        return console.error('error running query', err);
-      }
-      fn(null, result.rows);
-    });
-  });
-};
 
 var last_id = -1;
 setInterval(function() {
-  getGameData(last_id, function(err, result) {
+  nba.getGameData(last_id, function(err, result) {
     if (result.length > 0) {
       _.each(connections, function(conn) {
         _.each(result, function(row) {
