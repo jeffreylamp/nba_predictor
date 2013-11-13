@@ -12,7 +12,7 @@ var express = require('express')
 
 var app = express()
   , connections = {}
-  , conString = process.env["PQ_URI"] || "postgres://glamp@localhost/dev";
+  , conString = process.env["PG_URI"] || "postgres://glamp@localhost/dev";
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -78,19 +78,20 @@ http.createServer(app).listen(app.get('port'), function(){
 
 getGameData = function(firstId, fn) {
   pg.connect(conString, function(err, db, done) {
+    if(err) {
+      return console.error('could not connect to postgres', err);
+    }
+    var d1 = new Date();
+    d = d1.getFullYear() + "-" + d1.getMonth() + "-" + d1.getDate();
+    var q = "select * from os_nba_games where _id > " + firstId + " and gamedate >= '" + d + "';";
+    db.query(q, function(err, result) {
+      done();
       if(err) {
-        return console.error('could not connect to postgres', err);
+        return console.error('error running query', err);
       }
-      var d1 = new Date();
-      d = d1.getFullYear() + "-" + d1.getMonth() + "-" + d1.getDate();
-      var q = "select * from os_nba_games where _id > " + firstId + " and gamedate >= '" + d + "';";
-      db.query(q, function(err, result) {
-        if(err) {
-          return console.error('error running query', err);
-        }
-        fn(null, result.rows);
-      });
+      fn(null, result.rows);
     });
+  });
 };
 
 var last_id = -1;
