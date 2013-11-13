@@ -12,3 +12,6 @@
 export PG_URI=postgres://{USERNAME}:{PASSWORD}@{HOST}/{DBNAME}
 node app.js
 ```
+
+- open [http://localhost:3000](http://localhost:3000)
+- *graphs are still a work in progress!*
