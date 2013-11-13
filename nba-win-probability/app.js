@@ -36,6 +36,11 @@ app.get('/', function(req, res) {
   res.render('index', { title: "NBA Win Probability" });
 });
 
+/*
+ * We're going to use long polling here instead of the "typical" socket.io
+ * setup. This is because there really isn't a reason that the client would
+ * need to push data back to the server (at least in the app's current form).
+*/
 app.get('/scores', function(req, res) {
   // keep the connection open indefinitely
   req.socket.setTimeout(Infinity);
@@ -47,7 +52,10 @@ app.get('/scores', function(req, res) {
       res.write(body);
     }
   };
-  console.log("new connection. grabbing initial data...");
+  /* To keep things simple, we're just going to send all of today's game data 
+     to the client. This will give us a page that will auto-update as scores
+     of games change.
+  */
   getGameData(-1, function(err, result) {
     if (err) {
       console.log("error fetching initial data: " + err);
@@ -59,6 +67,8 @@ app.get('/scores', function(req, res) {
   });
   connections[conn.id] = conn;
 
+  //Just fulfilling the protocol here. This will make sure the connection 
+  //remains open between the client and server.
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
@@ -67,6 +77,7 @@ app.get('/scores', function(req, res) {
   });
   res.write('\n');
 
+  // when the client leaves, delete the corresponding connection
   req.on('close', function() {
     delete connections[conn.id];
   });
