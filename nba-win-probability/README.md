@@ -15,3 +15,9 @@ node app.js
 
 - open [http://localhost:3000](http://localhost:3000)
 - *graphs are still a work in progress!*
+
+
+### Examples
+
+<img src="public/images/games-2013-11-13.png" style="height: 300px;">
+<img src="public/images/no_at_utah_2013-11-13.png" style="height: 300px;">
