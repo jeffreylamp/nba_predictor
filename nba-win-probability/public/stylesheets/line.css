@@ -19,8 +19,19 @@ body {
   stroke-width: 1.5px;
 }
 
+.line2 {
+  fill: none;
+  stroke: crimson;
+  stroke-width: 1.5px;
+}
+
 .prob0 {
   fill: none;
   stroke: coral;
   stroke-width: 1.5px;
 }
+
+.legend rect {
+  fill:white;
+  stroke:black;
+  opacity:0.8;}

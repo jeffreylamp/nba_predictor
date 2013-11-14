@@ -28,6 +28,10 @@ makeLineChart = function(_id, selector, swidth, sheight) {
       .x(function(d) { return x(d.time_remaining); })
       .y(function(d) { return y(d.pred); });
 
+  var line2 = d3.svg.line()
+      .x(function(d) { return x(d.time_remaining); })
+      .y(function(d) { return y(1 - d.pred); });
+
   var svg = d3.select(selector).append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -41,14 +45,6 @@ makeLineChart = function(_id, selector, swidth, sheight) {
       , title = visitor + " @ " + data[0].home;
 
     $("#game_" + _id).prepend("<a href='/game/" + _id + "'><h4>" + title + "</h4></a>");
-
-    // svg.append("text")
-    //     .attr("x", (width / 2))             
-    //     .attr("y", 0 - (margin.top / 2))
-    //     .attr("text-anchor", "middle")  
-    //     .style("font-size", "12px") 
-    //     .text(title);
-
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
@@ -57,18 +53,18 @@ makeLineChart = function(_id, selector, swidth, sheight) {
     svg.append("g")
         .attr("class", "y axis")
         .call(yAxis)
-      .append("text")
-        .attr("x", width/2)
-        .attr("y", 10)
-        .attr("dy", ".71em")
-        .style("text-anchor", "middle")
-        .text("P(" + home + " win)");
-    svg.append("text")
-        .attr("x", width/2)
-        .attr("y", height - 10)
-        .attr("dy", ".71em")
-        .style("text-anchor", "middle")
-        .text("P(" + visitor + " win)");
+    //   .append("text")
+    //     .attr("x", width/2)
+    //     .attr("y", 10)
+    //     .attr("dy", ".71em")
+    //     .style("text-anchor", "middle")
+    //     .text("P(" + home + " win)");
+    // svg.append("text")
+    //     .attr("x", width/2)
+    //     .attr("y", height - 10)
+    //     .attr("dy", ".71em")
+    //     .style("text-anchor", "middle")
+    //     .text("P(" + visitor + " win)");
     svg.append("path")
         .datum([{time_remaining: 2800, pred: 0.5}, {time_remaining: 0, pred: 0.5}])
         .attr("class", "prob0")
@@ -76,6 +72,17 @@ makeLineChart = function(_id, selector, swidth, sheight) {
     svg.append("path")
         .datum(data)
         .attr("class", "line")
+        .attr("data-legend",function(d) { return d[0].home})
         .attr("d", line);
+    svg.append("path")
+        .datum(data)
+        .attr("class", "line2")
+        .attr("data-legend",function(d) { return d[0].visitor})
+        .attr("d", line2);
+    legend = svg.append("g")
+        .attr("class","legend")
+        .attr("transform","translate(25,15)")
+        .style("font-size","8px")
+        .call(d3.legend)
   });
 }
