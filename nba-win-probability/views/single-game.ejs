@@ -3,8 +3,11 @@
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+    <link rel='stylesheet' href='/stylesheets/line.css' />
     <script src='/javascripts/jquery-1.10.2.min.js'></script>
+    <script src="/javascripts/d3.v2.js"></script>
     <script src='/javascripts/Chart.js'></script>
+    <script src='/javascripts/line-chart.js'></script>
   </head>
 <body>
 <div class="container">
@@ -43,18 +46,12 @@
 </div>
 
 <!-- START CHARTS -->
-<div class="row charts"></div>
+<div id="chart"></div>
 <!-- END CHARTS -->
 
 </div>
 
-
-
-
-
-
   <script type="text/javascript">
-
     /* 
        NBA Win Probability: http://www.advancednflstats.com/
        - Each chart should be clickable. It will bring you to a new view where you
@@ -69,53 +66,8 @@
          - We'll get new data every minute; Maybe we could just do this w/ a static chart?
     */
     var _id = '<%= _id %>'
-      , game_ids = []
-      , chartTemplate = '<div class="col-xs-6 col-sm-4"><canvas id="{ID}" width="800" height="500"></canvas></div>';
-
-    $.get("/game/" + _id + "/json", function(d) {
-      var series = {}
-        , labs = {}
-        , names = {};
-      d.forEach(function(game) {
-        var data = { home_lead: [game.home_lead], time_remaining: [game.time_remaining] };
-        
-        if (game_ids.indexOf(game.game_id) < 0) {
-          // $("#charts").append(chartTemplate.replace("{ID}", game.game_id));
-          $(".charts").each(function(idx, row) {
-            if ($(row).children().length < 3) {
-              $(row).append(chartTemplate.replace("{ID}", game.game_id));
-              return false;
-            }
-          })
-          game_ids.push(game.game_id);
-          series[game.game_id] = [];
-          labs[game.game_id] = [];
-          names[game.game_id] = game.visitor + " @ " + game.home;
-        }
-        series[game.game_id].push(game.home_lead);
-        // labs[game.game_id].push(game.time_remaining);
-        labs[game.game_id].push("");
-      });
-
-      game_ids.forEach(function(_id) {
-        var data = {
-          labels: labs[_id],
-          datasets : [{
-            fillColor : "white",
-            strokeColor : "rgba(151,187,205,1)",
-            pointColor : "rgba(151,187,205,1)",
-            pointStrokeColor : "#fff",
-            data: series[_id]
-          }]
-        };
-        var ctx = $("#" + _id).get(0).getContext("2d");
-        $("#game-name").text(names[_id]);
-        var title = "<a href='/game/" + _id + "'></a>";
-        $("#" + _id).before(title)
-        new Chart(ctx).Line(data, { scaleShowGridLines : false, pointDotRadius : 3});
-      });
-    });
-
+    $("#chart").append("<div id='game_" + _id + "'></div>")
+    makeLineChart(_id, "#game_" + _id, 900, 500);
   </script>
 
   </body>
