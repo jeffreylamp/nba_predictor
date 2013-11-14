@@ -21,3 +21,8 @@ node app.js
 
 <img src="public/images/games-2013-11-13.png" style="height: 300px;">
 <img src="public/images/no_at_utah_2013-11-13.png" style="height: 300px;">
+
+### TODO
+- Not scraping time_remaining=0 or final scores
+- Not setup to handle overtime
+- Add current/final scores and minutes remaining in quarter
