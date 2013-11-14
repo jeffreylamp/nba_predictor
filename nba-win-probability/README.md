@@ -9,8 +9,8 @@
 - run the node app in another
 
 ```
-export PG_URI=postgres://{USERNAME}:{PASSWORD}@{HOST}/{DBNAME}
-node app.js
+$ export PG_URI=postgres://{USERNAME}:{PASSWORD}@{HOST}/{DBNAME}
+$ node app.js
 ```
 
 - open [http://localhost:3000](http://localhost:3000)
