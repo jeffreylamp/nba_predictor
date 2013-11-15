@@ -45,6 +45,7 @@ makeLineChart = function(_id, selector, swidth, sheight) {
       , title = visitor + " @ " + data[0].home;
 
     $("#game_" + _id).prepend("<a href='/game/" + _id + "'><h4>" + title + "</h4></a>");
+    $("#game_" + _id).append("")
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
@@ -53,32 +54,106 @@ makeLineChart = function(_id, selector, swidth, sheight) {
     svg.append("g")
         .attr("class", "y axis")
         .call(yAxis)
-    //   .append("text")
-    //     .attr("x", width/2)
-    //     .attr("y", 10)
-    //     .attr("dy", ".71em")
-    //     .style("text-anchor", "middle")
-    //     .text("P(" + home + " win)");
-    // svg.append("text")
-    //     .attr("x", width/2)
-    //     .attr("y", height - 10)
-    //     .attr("dy", ".71em")
-    //     .style("text-anchor", "middle")
-    //     .text("P(" + visitor + " win)");
+
+    // horizontal at 0.5
     svg.append("path")
         .datum([{time_remaining: 2800, pred: 0.5}, {time_remaining: 0, pred: 0.5}])
         .attr("class", "prob0")
         .attr("d", line);
+    // P(Home Win) line
     svg.append("path")
         .datum(data)
         .attr("class", "line")
         .attr("data-legend",function(d) { return d[0].home})
         .attr("d", line);
+    // P(Home Win) dots
+    svg.selectAll(".dot")
+          .data(data)
+        .enter().append("circle")
+          .attr("class", "dot")
+          .attr("r", 2.5)
+          .attr("cx", function(d) { return x(d.time_remaining); })
+          .attr("cy", function(d) { return y(d.pred); })
+          .style("fill", function(d) { return "steelblue"})
+          // hover over
+          .call(d3.helper.tooltip()
+                .attr({class: function(d, i) {
+                  return d + ' ' +  i + ' A';
+                }})
+                .attr("class", "timehover")
+                .style({
+                  "font-size": "20px",
+                  "background-color": "white",
+                  "border-style": "solid",
+                  "border-width": "1px"
+                })
+                .text(function(d, i){ 
+                  var diff = d.home_lead.toString();
+                  if (diff.slice(0)!="-") {
+                    diff = "+" + diff;
+                  }
+                  var msg = '';
+                  msg += "<table border=1><tr><td>" + d.visitor + "</td><td></td></tr>";
+                  msg += "<tr><td>" + d.home + "</td><td>" + diff + "</td></tr></table>";
+                  msg += 'P(Win)='+ Math.round(100*d.pred, 3) + "%";
+                  msg += "<br>Time Remaining: " + d.time_remaining;
+                  return msg;
+                })
+            )
+          .on('mouseover', function(d, i){
+            d3.select(this).style({fill: 'skyblue'});
+          })
+          .on('mouseout', function(d, i){
+            d3.select(this).style({fill: 'steelblue'});
+          });
+
+    // P(Visitor Win)
     svg.append("path")
         .datum(data)
         .attr("class", "line2")
         .attr("data-legend",function(d) { return d[0].visitor})
         .attr("d", line2);
+    // P(Visitor Win) dots
+    svg.selectAll(".dot2")
+          .data(data)
+        .enter().append("circle")
+          .attr("class", "dot")
+          .attr("r", 2.5)
+          .attr("cx", function(d) { return x(d.time_remaining); })
+          .attr("cy", function(d) { return y(1 - d.pred); })
+          .style("fill", function(d) { return "crimson"})
+          // hover over
+          .call(d3.helper.tooltip()
+                .attr({class: function(d, i) {
+                  return d + ' ' +  i + ' A';
+                }})
+                .attr("class", "timehover")
+                .style({
+                  "font-size": "20px",
+                  "background-color": "white",
+                  "border-style": "solid",
+                  "border-width": "1px"
+                })
+                .text(function(d, i){ 
+                  var diff = d.home_lead.toString();
+                  if (diff.slice(0)!="-") {
+                    diff = "+" + diff;
+                  }
+                  var msg = '';
+                  msg += "<table border=1><tr><td>" + d.visitor + "</td><td></td></tr>";
+                  msg += "<tr><td>" + d.home + "</td><td>" + diff + "</td></tr></table>";
+                  msg += 'P(Win)='+ Math.round(100*(1 - d.pred), 3) + "%";
+                  msg += "<br>Time Remaining: " + d.time_remaining;
+                  return msg;
+                })
+            )
+          .on('mouseover', function(d, i){
+            d3.select(this).style({fill: 'skyblue'});
+          })
+          .on('mouseout', function(d, i){
+            d3.select(this).style({fill: 'crimson'});
+          });
+
     legend = svg.append("g")
         .attr("class","legend")
         .attr("transform","translate(25,15)")

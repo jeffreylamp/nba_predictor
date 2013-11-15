@@ -102,7 +102,7 @@ app.get('/game/:_id/json', function(req, res) {
       data[k] = _.pluck(result, k);
     });
 
-    yh.predict("nbaPredictor", -1, data, function(preds) {
+    yh.predict("nbaPredictor", null, data, function(preds) {
       var i = 0;
       preds.pred.forEach(function(pred) {
         result[i].pred = pred;
