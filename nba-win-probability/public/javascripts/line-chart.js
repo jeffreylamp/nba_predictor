@@ -1,3 +1,15 @@
+pad = function(n, width, z) {
+  z = z || '0';
+  n = n + '';
+  return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+}
+secondsToQuarter = function(s) {
+  var quarter = "Q" + (4 - Math.floor(s / 720));
+  var min = Math.floor((s % 720) / 60);
+  var sec = (s % 720) - min*60;
+  return quarter + " " + pad(min, 2) + ":" + pad(sec, 2);
+}
+
 makeLineChart = function(_id, selector, swidth, sheight) {
   var margin = {top: 20, right: 20, bottom: 30, left: 50},
     width = swidth - margin.left - margin.right,
@@ -96,7 +108,7 @@ makeLineChart = function(_id, selector, swidth, sheight) {
                   msg += "<table border=1><tr><td><span style='color: crimson'>" + d.visitor + "</span></td><td></td></tr>";
                   msg += "<tr><td><span style='color: steelblue'>" + d.home + "</span></td><td>" + diff + "</td></tr></table>";
                   msg += 'P(Win)='+ Math.round(100*d.pred, 3) + "%";
-                  msg += "<br>Time Remaining: " + d.time_remaining;
+                  msg += "<br>Time Remaining: " + secondsToQuarter(d.time_remaining);
                   return msg;
                 })
             )
@@ -143,7 +155,7 @@ makeLineChart = function(_id, selector, swidth, sheight) {
                   msg += "<table border=1><tr><td><span style='color: crimson'>" + d.visitor + "</span></td><td></td></tr>";
                   msg += "<tr><td><span style='color: steelblue'>" + d.home + "</span></td><td>" + diff + "</td></tr></table>";
                   msg += 'P(Win)='+ Math.round(100*(1 - d.pred), 3) + "%";
-                  msg += "<br>Time Remaining: " + d.time_remaining;
+                  msg += "<br>Time Remaining: " + secondsToQuarter(d.time_remaining);
                   return msg;
                 })
             )
