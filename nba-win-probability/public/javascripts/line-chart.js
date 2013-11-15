@@ -1,3 +1,12 @@
+function clone(obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
+}
+
 pad = function(n, width, z) {
   z = z || '0';
   n = n + '';
@@ -52,6 +61,17 @@ makeLineChart = function(_id, selector, swidth, sheight) {
 
 
   d3.json("/game/" + _id + "/json", function(data) {
+    var i = 1
+      , newdata = [];
+    data.slice(0, -1).forEach(function(d) {
+      newdata.push(d);
+      var d = clone(d);
+      d.time_remaining = data[i].time_remaining;
+      newdata.push(d);
+      i++;
+    });
+    data = newdata;
+    data.forEach(function(x) { console.log(JSON.stringify(x)) })
     var visitor = data[0].visitor
       , home = data[0].home
       , title = visitor + " @ " + data[0].home;
@@ -83,7 +103,7 @@ makeLineChart = function(_id, selector, swidth, sheight) {
           .data(data)
         .enter().append("circle")
           .attr("class", "dot")
-          .attr("r", 3.5)
+          .attr("r", 2.0)
           .attr("cx", function(d) { return x(d.time_remaining); })
           .attr("cy", function(d) { return y(d.pred); })
           .style("fill", function(d) { return "steelblue"})
@@ -130,7 +150,7 @@ makeLineChart = function(_id, selector, swidth, sheight) {
           .data(data)
         .enter().append("circle")
           .attr("class", "dot")
-          .attr("r", 3.5)
+          .attr("r", 2.0)
           .attr("cx", function(d) { return x(d.time_remaining); })
           .attr("cy", function(d) { return y(1 - d.pred); })
           .style("fill", function(d) { return "crimson"})
