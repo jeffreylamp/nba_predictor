@@ -140,6 +140,11 @@ io.sockets.on("connection", function(socket) {
 
 });
 
+
+/*
+ * We're polling our database here. We're just looking for any new scores. Once we identify new
+ * scores, we push them to the client.
+ */
 var last_id = -1;
 setInterval(function() {
   nba.getGameData(last_id, function(err, result) {
