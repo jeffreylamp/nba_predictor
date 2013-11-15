@@ -1,6 +1,6 @@
 {
   "name": "nba-win-probability",
-  "version": "0.0.1-11",
+  "version": "0.0.1-12",
   "private": true,
   "scripts": {
     "start": "node app.js"
@@ -12,7 +12,8 @@
     "pg": "~2.8.2",
     "underscore": "~1.5.2",
     "coffee-script": "~1.6.3",
-    "yhat": "0.1.0"
+    "yhat": "0.1.0",
+    "socket.io": "~0.9.16"
   },
   "subdomain": "nba-win-prob",
   "engines": {

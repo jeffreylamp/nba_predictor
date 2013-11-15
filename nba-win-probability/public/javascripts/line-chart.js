@@ -71,7 +71,6 @@ makeLineChart = function(_id, selector, swidth, sheight) {
       i++;
     });
     data = newdata;
-    data.forEach(function(x) { console.log(JSON.stringify(x)) })
     var visitor = data[0].visitor
       , home = data[0].home
       , title = visitor + " @ " + data[0].home;
@@ -193,3 +192,9 @@ makeLineChart = function(_id, selector, swidth, sheight) {
         .call(d3.legend)
   });
 }
+
+addToChart = function(_id, data) {
+
+};
+
+

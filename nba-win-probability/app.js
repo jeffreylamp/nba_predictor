@@ -113,73 +113,42 @@ app.get('/game/:_id/json', function(req, res) {
   });
 });
 
-/*
- * We're going to use long polling here instead of the "typical" socket.io
- * setup. This is because there really isn't a reason that the client would
- * need to push data back to the server (at least in the app's current form).
-*/
-app.get('/scores', function(req, res) {
-  // keep the connection open indefinitely
-  req.socket.setTimeout(Infinity);
-  // create a way for us to push data to the client
-  var conn = {
-    id: uuid.v4(),
-    send: function(data) {
-      var body  = 'data: ' + JSON.stringify(data) + '\n\n';
-      res.write(body);
-    }
-  };
-  /* To keep things simple, we're just going to send all of today's game data 
-     to the client. This will give us a page that will auto-update as scores
-     of games change.
-  */
-  nba.getGameData(-1, function(err, result) {
-    if (err) {
-      console.log("error fetching initial data: " + err);
-    }
-    console.log("nrows: " + result.length);
-    _.each(result, function(row) {
-      conn.send(row);
-    });
-  });
-  connections[conn.id] = conn;
-
-  //Just fulfilling the protocol here. This will make sure the connection 
-  //remains open between the client and server.
-  res.writeHead(200, {
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive',
-    'X-Accel-Buffering': 'no' // Disable buffering for nginx
-  });
-  res.write('\n');
-
-  // when the client leaves, delete the corresponding connection
-  req.on('close', function() {
-    delete connections[conn.id];
-  });
-});
-
 app.use(function(req, res, next) {
   res.send('Page not found', 404);
 });
 
-http.createServer(app).listen(app.get('port'), function(){
+var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
 
-// var last_id = -1;
-// setInterval(function() {
-//   nba.getGameData(last_id, function(err, result) {
-//     if (result.length > 0) {
-//       _.each(connections, function(conn) {
-//         _.each(result, function(row) {
-//           conn.send(row);
-//         });
-//       });
-//       last_id = result.slice(-1)[0]._id;
-//     }
-//   });
-// }, 5*1000);
+var io = require('socket.io').listen(server, { log: false });
+
+
+io.sockets.on("connection", function(socket) {
+
+  console.log("welcome to the party!");
+
+  socket.on("subscribe", function(game_id) {
+    socket.join(game_id);
+    console.log(socket.id + " just joined => " + game_id);
+  });
+
+  socket.on("disconnect", function() {
+    console.log("goodbye");
+  });
+
+});
+
+var last_id = -1;
+setInterval(function() {
+  nba.getGameData(last_id, function(err, result) {
+    if (result.length > 0) {
+      _.each(result, function(row) {
+        io.sockets.in(row.gameid).emit("newdata", row);
+      });
+      last_id = result.slice(-1)[0]._id;
+    } 
+  });
+}, 59*1000);
 

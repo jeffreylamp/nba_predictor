@@ -13,7 +13,34 @@ module.exports = (conString) ->
     getGameData: (firstId, fn) ->
       d1 = new Date()
       d = d1.getFullYear() + "-" + (d1.getMonth() + 1) + "-" + d1.getDate()
-      q = "select * from os_nba_games where _id > #{firstId} and gamedate >= '#{d}';"
+      q = """
+      select
+        s._id as gameid
+        , g._id
+        , g.team_home
+        , g.team_away
+        , g.time_remaining
+        , g.home_lead
+        , g.game_id
+        , g.gamedate
+        , g.insert_time
+      from
+          os_nba_schedule s
+      inner join
+          os_nba_teams t1
+              on s.visitor = t1.full_name
+      inner join
+          os_nba_teams t2
+              on s.home = t2.full_name
+      inner join
+          os_nba_games g
+              on t1.short_name || ' @ ' || t2.short_name = g.game_id
+              -- windows for time zones. assume same 2 teams aren't playing on consecutive days
+              and g.gamedate::date between s.gamedate::date - 1 and s.gamedate::date + 1
+              and g.time_remaining > 0
+      where
+        g._id > #{firstId} and g.gamedate >= '#{d}';
+      """
       execQuery(q, fn)
 
     gameById: (_id, fn) ->
