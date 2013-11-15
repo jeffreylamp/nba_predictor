@@ -71,7 +71,7 @@ makeLineChart = function(_id, selector, swidth, sheight) {
           .data(data)
         .enter().append("circle")
           .attr("class", "dot")
-          .attr("r", 2.5)
+          .attr("r", 3.5)
           .attr("cx", function(d) { return x(d.time_remaining); })
           .attr("cy", function(d) { return y(d.pred); })
           .style("fill", function(d) { return "steelblue"})
@@ -89,19 +89,19 @@ makeLineChart = function(_id, selector, swidth, sheight) {
                 })
                 .text(function(d, i){ 
                   var diff = d.home_lead.toString();
-                  if (diff.slice(0)!="-") {
-                    diff = "+" + diff;
-                  }
+                  // if (diff.slice(0)!="-") {
+                  //   diff = "+" + diff;
+                  // }
                   var msg = '';
-                  msg += "<table border=1><tr><td>" + d.visitor + "</td><td></td></tr>";
-                  msg += "<tr><td>" + d.home + "</td><td>" + diff + "</td></tr></table>";
+                  msg += "<table border=1><tr><td><span style='color: crimson'>" + d.visitor + "</span></td><td></td></tr>";
+                  msg += "<tr><td><span style='color: steelblue'>" + d.home + "</span></td><td>" + diff + "</td></tr></table>";
                   msg += 'P(Win)='+ Math.round(100*d.pred, 3) + "%";
                   msg += "<br>Time Remaining: " + d.time_remaining;
                   return msg;
                 })
             )
           .on('mouseover', function(d, i){
-            d3.select(this).style({fill: 'skyblue'});
+            d3.select(this).style({fill: 'white'});
           })
           .on('mouseout', function(d, i){
             d3.select(this).style({fill: 'steelblue'});
@@ -118,7 +118,7 @@ makeLineChart = function(_id, selector, swidth, sheight) {
           .data(data)
         .enter().append("circle")
           .attr("class", "dot")
-          .attr("r", 2.5)
+          .attr("r", 3.5)
           .attr("cx", function(d) { return x(d.time_remaining); })
           .attr("cy", function(d) { return y(1 - d.pred); })
           .style("fill", function(d) { return "crimson"})
@@ -136,19 +136,19 @@ makeLineChart = function(_id, selector, swidth, sheight) {
                 })
                 .text(function(d, i){ 
                   var diff = d.home_lead.toString();
-                  if (diff.slice(0)!="-") {
-                    diff = "+" + diff;
-                  }
+                  // if (diff.slice(0)!="-") {
+                  //   diff = "+" + diff;
+                  // }
                   var msg = '';
-                  msg += "<table border=1><tr><td>" + d.visitor + "</td><td></td></tr>";
-                  msg += "<tr><td>" + d.home + "</td><td>" + diff + "</td></tr></table>";
+                  msg += "<table border=1><tr><td><span style='color: crimson'>" + d.visitor + "</span></td><td></td></tr>";
+                  msg += "<tr><td><span style='color: steelblue'>" + d.home + "</span></td><td>" + diff + "</td></tr></table>";
                   msg += 'P(Win)='+ Math.round(100*(1 - d.pred), 3) + "%";
                   msg += "<br>Time Remaining: " + d.time_remaining;
                   return msg;
                 })
             )
           .on('mouseover', function(d, i){
-            d3.select(this).style({fill: 'skyblue'});
+            d3.select(this).style({fill: 'white'});
           })
           .on('mouseout', function(d, i){
             d3.select(this).style({fill: 'crimson'});
