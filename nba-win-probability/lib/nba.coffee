@@ -30,7 +30,7 @@ module.exports = (conString) ->
           , g.time_remaining as time_remaining
           , home_lead 
       from
-          os_nba_schedule_2013 s
+          os_nba_schedule s
       inner join
           os_nba_teams t1
               on s.visitor = t1.full_name
@@ -69,7 +69,7 @@ module.exports = (conString) ->
           , g.time_remaining as time_remaining
           , home_lead 
       from
-          os_nba_schedule_2013 s
+          os_nba_schedule s
       inner join
           os_nba_teams t1
               on s.visitor = t1.full_name
@@ -103,7 +103,7 @@ module.exports = (conString) ->
         distinct
           s._id
       from
-          os_nba_schedule_2013 s
+          os_nba_schedule s
       inner join
           os_nba_teams t1
               on s.visitor = t1.full_name
