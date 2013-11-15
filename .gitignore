@@ -5,3 +5,5 @@
 *-Ex.R
 
 node_modules
+nba-win-probability/config
+*.swp
