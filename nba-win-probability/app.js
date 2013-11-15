@@ -6,7 +6,6 @@
 var express = require('express')
   , http = require('http')
   , path = require('path')
-  , async = require('async')
   , pg = require('pg')
   , _ = require('underscore')
   , uuid = require('uuid')
@@ -41,11 +40,16 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', function(req, res) {
-  if (new Date().getHours() > 17) {
+  var time_in_nyc = new Date().getHours() - parseInt(process.env["TZ_OFFSET"] || "0");
+  if (time_in_nyc > 17) {
     res.redirect('/today');
   } else {
     res.redirect('/yesterday');
   }
+});
+
+app.get('/api', function(req, res) {
+  res.render('api');
 });
 
 app.get('/today', function(req, res) {
@@ -154,6 +158,10 @@ app.get('/scores', function(req, res) {
   req.on('close', function() {
     delete connections[conn.id];
   });
+});
+
+app.use(function(req, res, next) {
+  res.send('Page not found', 404);
 });
 
 http.createServer(app).listen(app.get('port'), function(){
