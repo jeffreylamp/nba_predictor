@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+    <link rel='stylesheet' href='/stylesheets/line.css' />
+    <script src='/socket.io/socket.io.js'></script>
+    <script src='/javascripts/jquery-1.10.2.min.js'></script>
+    <script src="/javascripts/d3.v2.js"></script>
+    <script src='/javascripts/d3.legend.js'></script>
+    <script src='/javascripts/d3.tooltip.js'></script>
+    <script src='/javascripts/line-chart.js'></script>
+  </head>
+<body>
+<div class="container">
+  <!-- NAVBAR -->
+<div class="bs-docs-section clearfix">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="bs-example">
+        <div class="navbar navbar-inverse">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://www.yhathq.com/"><span style="color: orange">y</span>hat</a>
+          </div>
+          <div class="navbar-collapse collapse navbar-responsive-collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="/today">Today</a></li>
+              <li><a href="/yesterday">Yesterday</a></li>
+              <li><a href="/api">API</a></li>
+            </ul>
+          </div><!-- /.nav-collapse -->
+        </div><!-- /.navbar -->
+    </div>
+  </div> 
+</div>
+</div>
+<!-- END NAVBAR -->
+<div class="row">
+  <div class="col-lg-12 text-center">
+    <div class="page-header">
+      <h1 id="game-name">NBA Win Probabilities</h1>
+    </div>
+  </div>
+</div>
+
+<!-- START CHARTS -->
+<div id="chart"></div>
+<!-- END CHARTS -->
+
+</div>
+
+  <script type="text/javascript">
+    /* 
+NBA Win Probability: http://www.advancednflstats.com/
+- Each chart should be clickable. It will bring you to a new view where you
+ can see an enlarged version of the same chart.
+
+New events here:
+ - If we receive data for a game that doesn't exist, create a graph for that game
+ - Id of each should be the gameid. We'll handle the initial data as a stream
+   of events. So when a client first connects, we'll send him everything we know
+   about every game that's currently being played.
+ - If we receive a new datapoint for a game then add it to the appropriate chart
+ - We'll get new data every minute; Maybe we could just do this w/ a static chart?
+    */
+    var _id = '<%= _id %>'
+    $("#chart").append("<div id='game_" + _id + "'></div>")
+    makeLineChart(_id, "#game_" + _id, 900, 500);
+    var socket = io.connect();
+    socket.emit("subscribe", _id);
+    socket.on("newdata", function(data) {
+      addToChart(_id, data);
+    });
+  </script>
+
+  </body>
+</html>

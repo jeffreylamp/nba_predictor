@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+    <link rel='stylesheet' href='/stylesheets/line.css' />
+    <script src='/javascripts/jquery-1.10.2.min.js'></script>
+    <script src='/javascripts/d3.v2.js'></script>
+    <script src="/javascripts/d3.legend.js"></script>
+    <script src='/javascripts/d3.tooltip.js'></script>
+    <script src='/javascripts/line-chart.js'></script>
+  </head>
+<body>
+<div class="container">
+  <!-- NAVBAR -->
+<div class="bs-docs-section clearfix">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="bs-example">
+        <div class="navbar navbar-inverse">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://www.yhathq.com/"><span style="color: orange">y</span>hat</a>
+          </div>
+          <div class="navbar-collapse collapse navbar-responsive-collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="/today">Today</a></li>
+              <li><a href="/yesterday">Yesterday</a></li>
+              <li><a href="/api">API</a></li>
+            </ul>
+          </div><!-- /.nav-collapse -->
+        </div><!-- /.navbar -->
+    </div>
+  </div> 
+</div>
+</div>
+<!-- END NAVBAR -->
+<div class="row">
+  <div class="col-lg-12 text-center">
+    <div class="page-header">
+      <h1 id="message"></h1>
+    </div>
+  </div>
+</div>
+<!-- START DATE BAR -->
+  <div class="bs-docs-section clearfix">
+    <div class="row">
+      <div class="col-lg-2">
+        <a href="#" class="btn btn-info prev-day">LAST</a>
+      </div>
+      <div class="col-lg-2 col-lg-offset-8">
+        <a href="#" class="btn btn-info next-day">LAST</a>
+      </div>
+    </div>
+  </div>
+<!-- END DATE BAR -->
+
+<div class="row">
+  <div class="col-lg-12"><h1></h1></div>
+</div>
+
+<!-- START CHARTS -->
+<div class="row charts"></div>
+<div class="row charts"></div>
+<div class="row charts"></div>
+<div class="row charts"></div>
+<div class="row charts"></div>
+<div class="row charts"></div>
+<!-- END CHARTS -->
+
+</div>
+
+
+  <script type="text/javascript">
+
+    /* 
+       NBA Win Probability: http://www.advancednflstats.com/
+       - Each chart should be clickable. It will bring you to a new view where you
+         can see an enlarged version of the same chart.
+
+       New events here:
+         - If we receive data for a game that doesn't exist, create a graph for that game
+         - Id of each should be the gameid. We'll handle the initial data as a stream
+           of events. So when a client first connects, we'll send him everything we know
+           about every game that's currently being played.
+         - If we receive a new datapoint for a game then add it to the appropriate chart
+         - We'll get new data every minute; Maybe we could just do this w/ a static chart?
+    */
+    var date = '<%= date %>'
+      , game_ids = []
+      , chartTemplate = '<div class="col-xs-6 col-sm-4"><div id="{ID}"><div class="chart"></div></div></div>';
+
+    var prevDay = new Date(new Date(date).getTime() - 19*60*60*1000)
+      , prevDay = [prevDay.getFullYear(), prevDay.getMonth() + 1, prevDay.getDate()].join("-");
+    $(".prev-day").text(prevDay);
+    $(".prev-day").attr("href", "/games/" + prevDay);
+
+    var nextDay = new Date(new Date(date).getTime() + 29*60*60*1000)
+      , nextDay = [nextDay.getFullYear(), nextDay.getMonth() + 1, nextDay.getDate()].join("-");
+
+    if ((new Date() - new Date(nextDay)) < 0) {
+      $(".next-day").text("The Future");
+      $(".next-day").attr("href", "");
+    } else {
+      $(".next-day").text(nextDay);
+      $(".next-day").attr("href", "/games/" + nextDay);
+    }
+    $("#message").text("Loading...");
+    $.get("/gamesids/" + date + "/json", function(d) {
+      d.forEach(function(item) {
+        var _id = item._id;
+        $(".charts").each(function(idx, row) {
+          if ($(row).children().length < 3) {
+            $(row).append(chartTemplate.replace("{ID}", "game_" + _id));
+            makeLineChart(_id, "#game_" + _id, 300, 300);
+            return false;
+          }
+        });
+      });
+    }).done(function() {
+      $("#message").text("NBA Win Probability");
+    });
+
+  </script>
+
+  </body>
+</html>

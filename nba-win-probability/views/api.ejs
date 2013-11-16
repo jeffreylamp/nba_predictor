@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>API</title>
+    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+    <link rel='stylesheet' href='/stylesheets/line.css' />
+    <script src='/javascripts/jquery-1.10.2.min.js'></script>
+  </head>
+<body>
+<div class="container">
+  <!-- NAVBAR -->
+<div class="bs-docs-section clearfix">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="bs-example">
+        <div class="navbar navbar-inverse">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://www.yhathq.com/"><span style="color: orange">y</span>hat</a>
+          </div>
+          <div class="navbar-collapse collapse navbar-responsive-collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="/today">Today</a></li>
+              <li><a href="/yesterday">Yesterday</a></li>
+              <li><a href="/api">API</a></li>
+            </ul>
+          </div><!-- /.nav-collapse -->
+        </div><!-- /.navbar -->
+    </div>
+  </div> 
+</div>
+</div>
+<!-- END NAVBAR -->
+<div class="row">
+  <div class="col-lg-12 text-center">
+    <div class="page-header">
+      <h1>Games API</h1>
+    </div>
+  </div>
+</div>
+
+<!-- DOCS -->
+<div class="row">
+ 
+  <div class="col-lg-12">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+          <h3 class="panel-title"><code>/games/:date/json</code></h3>
+      </div>
+      <div class="panel-body">
+       <p style='font-size: 20px;'>Returns a list of all events for all games for a given date.</p>
+       <h4>Example:</h4>
+       <pre>$ curl <a href="http://nba-win-prob.nodejitsu.com/games/2013-11-14/json">http://nba-win-prob.nodejitsu.com/games/2013-11-14/json</a></pre>
+       <pre>[
+    {
+      "game_id": "123",
+      "gamedate": "2013-11-14T00:00:00.000Z",
+      "visitor": "Oklahoma City Thunder",
+      "home": "Golden State Warriors",
+      "time_remaining": 2839,
+      "home_lead": 2
+    },
+    {
+      "game_id": "123",
+      "gamedate": "2013-11-14T00:00:00.000Z",
+      "visitor": "Oklahoma City Thunder",
+      "home": "Golden State Warriors",
+      "time_remaining": 2692,
+      "home_lead": 2
+    },
+    ...
+    ...
+    ...
+  {
+    "game_id": "123",
+    "gamedate": "2013-11-14T00:00:00.000Z",
+    "visitor": "Oklahoma City Thunder",
+    "home": "Golden State Warriors",
+    "time_remaining": 2555,
+    "home_lead": -2
+  }
+]
+       </pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  
+  <div class="col-lg-12">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+          <h3 class="panel-title"><code>/game/:_id/json</code></h3>
+      </div>
+      <div class="panel-body">
+       <p style='font-size: 20px;'>Returns a list of all events for a game with the win probabilities at each time interval.</p>
+       <h4>Example:</h4>
+       <pre>$ curl <a href="http://nba-win-prob.nodejitsu.com/game/123/json">http://nba-win-prob.nodejitsu.com/game/123/json</a></pre>
+       <pre>[
+  {
+    "game_id": "123",
+    "gamedate": "2013-11-14T00:00:00.000Z",
+    "visitor": "Oklahoma City Thunder",
+    "home": "Golden State Warriors",
+    "time_remaining": 2839,
+    "home_lead": 2,
+    "pred": 0.61148
+  },
+  {
+    "game_id": "123",
+    "gamedate": "2013-11-14T00:00:00.000Z",
+    "visitor": "Oklahoma City Thunder",
+    "home": "Golden State Warriors",
+    "time_remaining": 2692,
+    "home_lead": 2,
+    "pred": 0.6145
+  },
+    ...
+    ...
+    ...
+  {
+    "game_id": "123",
+    "gamedate": "2013-11-14T00:00:00.000Z",
+    "visitor": "Oklahoma City Thunder",
+    "home": "Golden State Warriors",
+    "time_remaining": 2555,
+    "home_lead": -2,
+    "pred": 0.55901
+  }
+]
+       </pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+
+  <div class="col-lg-12">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+          <h3 class="panel-title"><code>/gamesids/:date/json</code></h3>
+      </div>
+      <div class="panel-body">
+       <p style='font-size: 20px;'>Returns a list of all gameids for a given date.</p>
+       <h4>Example:</h4>
+       <pre>$ curl <a href="http://nba-win-prob.nodejitsu.com/gamesids/2013-11-14/json">http://nba-win-prob.nodejitsu.com/gamesids/2013-11-14/json</a></pre>
+       <pre>[
+  {
+    "_id": "123"
+  }
+]
+       </pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- END DOCS -->
+
+</div>
+
+
+</body>
+</html>

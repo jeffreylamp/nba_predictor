@@ -1,0 +1,53 @@
+body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.line2 {
+  fill: none;
+  stroke: crimson;
+  stroke-width: 1.5px;
+}
+
+.prob0 {
+  fill: none;
+  stroke: coral;
+  stroke-width: 1.5px;
+}
+
+.legend rect {
+  fill:white;
+  stroke:black;
+  opacity:0.8;
+}
+
+.dot {
+  fill: transparent;
+}
+
+.dot2 {
+}
+
+.timehover {
+  color: black;
+  font-size: 200px;
+  background-color: white;
+  border-style:solid;
+  border-width:5px;
+}
