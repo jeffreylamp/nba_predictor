@@ -41,8 +41,9 @@ if ('development' == app.get('env')) {
 
 app.get('/', function(req, res) {
   var time_in_nyc = new Date().getHours() - parseInt(process.env["TZ_OFFSET"] || "0");
-  console.log(time_in_nyc);
-  console.log("offset: ", parseInt(process.env["TZ_OFFSET"] || "0"));
+  if (time_in_nyc <= 0) {
+    time_in_nyc += 24;
+  }
   if (time_in_nyc > 17) {
     res.redirect('/today');
   } else {
