@@ -25,5 +25,5 @@ $ node app.js
 ### TODO
 - Not scraping time_remaining=0 or final scores
 - Not setup to handle overtime
-- Add current/final scores and minutes remaining in quarter
-- Add hoverover for points on the chart
+- Add ~~current~~/final scores and minutes remaining in quarter
+- ~~Add hoverover for points on the chart~~
