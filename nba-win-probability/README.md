@@ -1,4 +1,4 @@
-## NBA Win Probability
+## [NBA Win Probability](http://nba-win-prob.nodejitsu.com/)
 
 ### Quickstart
 - install node js: `brew install node`
