@@ -38,13 +38,10 @@ body {
 }
 
 .dot {
-  stroke: #000;
-  fill: steelblue;
+  fill: transparent;
 }
 
 .dot2 {
-  stroke: #000;
-  fill: crimson;
 }
 
 .timehover {

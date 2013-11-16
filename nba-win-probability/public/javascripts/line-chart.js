@@ -108,10 +108,9 @@ makeLineChart = function(_id, selector, swidth, sheight) {
           .data(data)
         .enter().append("circle")
           .attr("class", "dot")
-          .attr("r", 2.0)
+          .attr("r", 5.0)
           .attr("cx", function(d) { return x(d.time_remaining); })
           .attr("cy", function(d) { return y(d.pred); })
-          .style("fill", function(d) { return "steelblue"})
           // hover over
           .call(d3.helper.tooltip()
                 .attr({class: function(d, i) {
@@ -133,12 +132,6 @@ makeLineChart = function(_id, selector, swidth, sheight) {
                   return msg;
                 })
             )
-          .on('mouseover', function(d, i){
-            d3.select(this).style({fill: 'white'});
-          })
-          .on('mouseout', function(d, i){
-            d3.select(this).style({fill: 'steelblue'});
-          });
 
     // P(Visitor Win)
     svg.append("path")
@@ -151,10 +144,9 @@ makeLineChart = function(_id, selector, swidth, sheight) {
           .data(data)
         .enter().append("circle")
           .attr("class", "dot")
-          .attr("r", 2.0)
+          .attr("r", 5.0)
           .attr("cx", function(d) { return x(d.time_remaining); })
           .attr("cy", function(d) { return y(1 - d.pred); })
-          .style("fill", function(d) { return "crimson"})
           // hover over
           .call(d3.helper.tooltip()
                 .attr({class: function(d, i) {
@@ -181,10 +173,10 @@ makeLineChart = function(_id, selector, swidth, sheight) {
                 })
             )
           .on('mouseover', function(d, i){
-            d3.select(this).style({fill: 'white'});
+            //d3.select(this).style({fill: 'white'});
           })
           .on('mouseout', function(d, i){
-            d3.select(this).style({fill: 'crimson'});
+            //d3.select(this).style({fill: 'crimson'});
           });
 
     /*
