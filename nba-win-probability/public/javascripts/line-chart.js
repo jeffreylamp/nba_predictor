@@ -61,6 +61,12 @@ makeLineChart = function(_id, selector, swidth, sheight) {
 
 
   d3.json("/game/" + _id + "/json", function(data) {
+    var d = data.slice(-1)[0];
+    var boxscore = "<table border=1><tr><td><span style='color: crimson'>" + d.visitor + "</span></td><td>" + d.visitor_score + "</td></tr>";
+    boxscore += "<tr><td><span style='color: steelblue'>" + d.home + "</span></td><td>" + d.home_score + "</td></tr></table>";
+    boxscore += "<h6>" + secondsToQuarter(d.time_remaining) + "</h6>";
+    $(selector).prepend(boxscore);
+
     var i = 1
       , newdata = [];
     data.slice(0, -1).forEach(function(d) {
@@ -119,14 +125,10 @@ makeLineChart = function(_id, selector, swidth, sheight) {
                   "border-width": "1px"
                 })
                 .text(function(d, i){ 
-                  var diff = d.home_lead.toString();
-                  // if (diff.slice(0)!="-") {
-                  //   diff = "+" + diff;
-                  // }
                   var msg = '';
-                  msg += "<table border=1><tr><td><span style='color: crimson'>" + d.visitor + "</span></td><td></td></tr>";
-                  msg += "<tr><td><span style='color: steelblue'>" + d.home + "</span></td><td>" + diff + "</td></tr></table>";
-                  msg += 'P(Win)='+ Math.round(100*d.pred, 3) + "%";
+                  msg += "<table border=1><tr><td><span style='color: crimson'>" + d.visitor + "</span></td><td>" + d.visitor_score + "</td></tr>";
+                  msg += "<tr><td><span style='color: steelblue'>" + d.home + "</span></td><td>" + d.home_score + "</td></tr></table>";
+                  msg += 'P(' + d.home + ' win)='+ Math.round(100*d.pred, 3) + "%";
                   msg += "<br>Time Remaining: " + secondsToQuarter(d.time_remaining);
                   return msg;
                 })
@@ -171,9 +173,9 @@ makeLineChart = function(_id, selector, swidth, sheight) {
                   //   diff = "+" + diff;
                   // }
                   var msg = '';
-                  msg += "<table border=1><tr><td><span style='color: crimson'>" + d.visitor + "</span></td><td></td></tr>";
-                  msg += "<tr><td><span style='color: steelblue'>" + d.home + "</span></td><td>" + diff + "</td></tr></table>";
-                  msg += 'P(Win)='+ Math.round(100*(1 - d.pred), 3) + "%";
+                  msg += "<table border=1><tr><td><span style='color: crimson'>" + d.visitor + "</span></td><td>" + d.visitor_score + "</td></tr>";
+                  msg += "<tr><td><span style='color: steelblue'>" + d.home + "</span></td><td>" + d.home_score + "</td></tr></table>";
+                  msg += 'P(' + d.visitor + ' win)='+ Math.round(100*(1 - d.pred), 3) + "%";
                   msg += "<br>Time Remaining: " + secondsToQuarter(d.time_remaining);
                   return msg;
                 })
@@ -185,11 +187,13 @@ makeLineChart = function(_id, selector, swidth, sheight) {
             d3.select(this).style({fill: 'crimson'});
           });
 
-    legend = svg.append("g")
+    /*
+     legend = svg.append("g")
         .attr("class","legend")
         .attr("transform","translate(25,15)")
         .style("font-size","8px")
         .call(d3.legend)
+    */
   });
 }
 

@@ -56,6 +56,8 @@ module.exports = (conString) ->
           , t2.full_name as home
           , g.time_remaining as time_remaining
           , home_lead 
+          , home_score
+          , away_score as visitor_score
       from
           os_nba_schedule s
       inner join
